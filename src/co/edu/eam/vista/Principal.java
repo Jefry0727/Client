@@ -98,7 +98,7 @@ public class Principal extends JFrame {
 				
 				String pass = txtPass.getText();
 				
-				regis = new RegistrarDTO(user, pass);
+				regis = new RegistrarDTO(user, pass,"");
 				Client c = new Client();
 				c.ini(regis);
 				
