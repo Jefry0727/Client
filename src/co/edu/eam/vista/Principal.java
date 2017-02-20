@@ -11,10 +11,13 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import co.edu.eam.client.Client;
+import co.edu.eam.dto.LoginDTO;
 import co.edu.eam.dto.RegistrarDTO;
 
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.JTextField;
@@ -31,7 +34,7 @@ public class Principal extends JFrame {
 	private JTextField txtUsuario;
 	private JTextField txtPass;
 	
-	private RegistrarDTO regis;
+	private LoginDTO login;
 
 	/**
 	 * Launch the application.
@@ -58,36 +61,39 @@ public class Principal extends JFrame {
 		getContentPane().setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("Nombre de Usuario");
-		lblNewLabel.setBounds(10, 34, 119, 19);
+		lblNewLabel.setBounds(29, 34, 119, 19);
 		getContentPane().add(lblNewLabel);
 		
 		JLabel lblNewLabel_1 = new JLabel("Contraseña");
-		lblNewLabel_1.setBounds(10, 64, 62, 19);
+		lblNewLabel_1.setBounds(29, 64, 70, 18);
 		getContentPane().add(lblNewLabel_1);
 		
 		txtUsuario = new JTextField();
-		txtUsuario.setBounds(135, 33, 119, 20);
+		txtUsuario.setBounds(158, 33, 119, 20);
 		getContentPane().add(txtUsuario);
 		txtUsuario.setColumns(10);
 		
 		txtPass = new JTextField();
-		txtPass.setBounds(135, 63, 119, 19);
+		txtPass.setBounds(158, 63, 119, 19);
 		getContentPane().add(txtPass);
 		txtPass.setColumns(10);
 		
 		
 		
 		
-		JButton btnRegistrar = new JButton("Registrar");
+		JButton btnRegistrar = new JButton("Registrarse");
 		btnRegistrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				Registro reg = new Registro();
+				reg.setVisible(true);
+				Principal.this.dispose();
 				
 				
 				
 			}
 		});
-		btnRegistrar.setBounds(34, 106, 89, 23);
+		btnRegistrar.setBounds(34, 106, 102, 23);
 		getContentPane().add(btnRegistrar);
 		
 		JButton btnIniciarSesin = new JButton("Iniciar Sesión");
@@ -98,13 +104,43 @@ public class Principal extends JFrame {
 				
 				String pass = txtPass.getText();
 				
-				regis = new RegistrarDTO(user, pass,"");
-				Client c = new Client();
-				c.ini(regis);
+				login = new LoginDTO(user, pass);
+				Client c = new Client(login);
+				
+				Thread t =  new Thread(c,"hilo");
+				t.setPriority(Thread.MAX_PRIORITY);
+				t.start();
+				 
+				 try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				/**
+				 * para castear un Boolean
+				 */
+				boolean obj = Boolean.valueOf(c.getResp().toString());
+				
+				System.out.println(obj + " respuesta");
+				
+				if(obj){
+					
+					Messenger msj = new Messenger();
+					
+					msj.setVisible(true);
+					
+					Principal.this.dispose();
+				}else{
+					
+					JOptionPane.showMessageDialog(null, "Usuario y Contraseña invalidos");
+					
+				}
+				
 				
 			}
 		});
-		btnIniciarSesin.setBounds(139, 106, 115, 19);
+		btnIniciarSesin.setBounds(158, 106, 119, 23);
 		getContentPane().add(btnIniciarSesin);
 	}
 }
